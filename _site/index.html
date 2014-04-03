@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+  <!--[if lt IE 9]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <title>Sinatra Workshop - PSU Hackathon 2014 by West Arete</title>
+</head>
+
+<body>
+  <header>
+    <div class="inner">
+      <h1>Sinatra Workshop - PSU Hackathon 2014</h1>
+      <h2>The source code and documentation for West Arete&#39;s workshop at the PSU Hackathon.</h2>
+      <a href="https://github.com/westarete/psu-hackathon-2014" class="button"><small>View project on</small>GitHub</a>
+    </div>
+  </header>
+
+  <div id="content-wrapper">
+    <div class="inner clearfix">
+      <section id="main-content">
+        <h1>
+          <a name="psu-hackathon" class="anchor" href="#psu-hackathon"><span class="octicon octicon-link"></span></a>PSU Hackathon</h1>
+
+          <h2>
+            <a name="to-be-done-before-the-hackathon" class="anchor" href="#to-be-done-before-the-hackathon"><span class="octicon octicon-link"></span></a>To be done BEFORE the Hackathon
+          </h2>
+
+            <ol>
+              <li>
+                Download the text editor, Sublime Text 2, which is available for both Mac and Windows; <a href="http://www.sublimetext.com/2">http://www.sublimetext.com/2</a> (<em>what about 32 vs. 64 bit Windows? -&gt; see 'Stickiness 1.' below</em>)
+              </li>
+              <li>
+                Make sure Ruby is installed
+                <ul>
+                  <li>
+                    MAC ONLY: most likely Ruby is already installed (since it comes standard with a Mac)
+                    <ul>
+                      <li>to check which version of Ruby is installed, at the command line, type: 
+                        <code>ruby -v</code>
+                      </li>
+                      <li>it's good to go if the output looks something like this:  <code>ruby 2.0.0p247</code>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    WINDOWS ONLY: to download Ruby visit: <a href="http://rubyinstaller.org/downloads/">http://rubyinstaller.org/downloads/</a>
+                    <ul>
+                      <li>install Ruby 1.9.3-p545</li>
+                      <li>during the installation process, the options are:
+                        <ul>
+                          <li>install Td/Tk support (answer: NO)</li>
+                          <li>add Ruby executables to your PATH (answer: YES)</li>
+                          <li>associate .rb and .rbw files with this Ruby installation (answer: YES)</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ol>
+          <h2>
+            <a name="and-during-the-hackathon" class="anchor" href="#and-during-the-hackathon"><span class="octicon octicon-link"></span></a>And DURING the Hackathon
+          </h2>
+          
+            <ol>
+              <li>Create a new file in Sublime Text2</li>
+              <li>
+                Put this code in the file that was just created:</li>
+                <div><code>
+                  require 'sinatra'<br>
+                  get '/' do<br>
+                  "Hello World!"<br>
+                  end<br>
+                </code></div>
+              <li>Save the file as 'myapp.rb'</li>
+              <li>Go to the command line 
+                <ul>
+                  <li>navigate to the directory where that file is</li>
+                  <li>enter this on the command line; <code>gem install sinatra</code> (good on Mac or Windows)</li>
+                  <li>enter this on the command line; <code>ruby myapp.rb</code></li>
+                </ul>
+              </li>
+              <li>Open a web browser</li>
+              <li>Paste this where the URL goes: <code>http://localhost:4567</code></li>
+            </ol>
+
+          <h3>
+            <a name="helpful-links" class="anchor" href="#helpful-links"><span class="octicon octicon-link"></span></a>Helpful links
+          </h3>
+
+          <ol>
+            <li>Text editor, free download:  <a href="http://www.sublimetext.com/2">http://www.sublimetext.com/2</a> (Mac and Windows)</li>
+            <li>Sinatra instructions and documentation: <a href="http://www.sinatrarb.com/">http://www.sinatrarb.com/</a>
+            </li>
+            <li>(WINDOWS ONLY) install Ruby: <a href="http://rubyinstaller.org/downloads/">http://rubyinstaller.org/downloads/</a> </li>
+          </ol><h3>
+          <a name="stickiness" class="anchor" href="#stickiness"><span class="octicon octicon-link"></span></a>Stickiness</h3>
+
+          <ol>
+            <li>Do I have 32 bit or 64 bit Windows, and how do I check?
+
+              <ul>
+                <li>click on the start menu</li>
+                <li>right click on 'computer'</li>
+                <li>click on properties</li>
+                <li>System type displays if it's 32 or 64 bit</li>
+              </ul>
+            </li>
+          </ol>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/westarete/psu-hackathon-2014/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/westarete/psu-hackathon-2014/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/westarete/psu-hackathon-2014"></a> is maintained by <a href="https://github.com/westarete">westarete</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+
+  </body>
+  </html>
