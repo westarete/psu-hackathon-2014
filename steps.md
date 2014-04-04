@@ -368,6 +368,212 @@ Now swith over to `views/index.erb` and replace our small debug statements at th
 
 This should show a box for each forecast on the page. Go check it out in your browser! Try it with some different locations.
 
+## Step 11 - Display images
+
+Let's show some visuals to drive home what should be worn for the bike ride. At the top of your `app.rb`, right before the `get '/'` block starts, past the following code:
+
+```ruby
+helpers do
+
+  # Given a forecast, return a string to represent the type of attire that should be worn.
+  def attire(forecast)
+    if forecast.icon == 'clear-day'
+      "sunglasses"
+    elsif forecast.temperature < 40
+      "hat"
+    elsif forecast.precipProbability >= 0.5
+      "raincoat"
+    else
+      "tshirt"
+    end
+  end
+
+  # Given a forecast, return the URL of the attire image to display.
+  def attire_image_url(forecast)
+    "https://raw.githubusercontent.com/westarete/psu-hackathon-2014/master/public/images/#{attire(forecast)}.png"
+  end
+
+end
+```
+
+This defines two "helper methods" that our views can use to display images. 
+
+In `views/index.erb`, right below each of the "Heading In", "Lunch Time" and "Heading Home" headings, paste the following snippets to display each image:
+
+```html
+        <img src="<%= attire_image_url(@forecast_start) %>" width="140px">
+        <br>
+```
+
+```html
+        <img src="<%= attire_image_url(@forecast_lunch) %>" width="140px">
+        <br>
+```
+
+```html
+        <img src="<%= attire_image_url(@forecast_lunch) %>" width="140px">
+        <br>
+```
+
+Those snippets will call the helpers and inject the URLs for the right image for each box. Try it out, and you should now see the finished page.
+
+## Wrap Up
+
+Your app should now be functional. Here is the finished `app.rb`:
+
+```ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'sinatra'
+require 'sinatra/reloader' if development?
+require 'geocoder'
+require 'multi_json'
+require 'forecast_io'
+
+# Set our API key for talking to forecast.io
+ForecastIO.api_key = 'dc9060a06370dd03b46af35827653a8c'
+
+# Make sure we're using a gem that works on both Mac and Windows.
+MultiJson.use(:json_pure)
+
+# The methods in this block will be available to the views
+helpers do
+
+  # Given a forecast, return a string to represent the type of attire that should be worn.
+  def attire(forecast)
+    if forecast.icon == 'clear-day'
+      "sunglasses"
+    elsif forecast.temperature < 40
+      "hat"
+    elsif forecast.precipProbability >= 0.5
+      "raincoat"
+    else
+      "tshirt"
+    end
+  end
+
+  # Given a forecast, return the URL of the attire image to display.
+  def attire_image_url(forecast)
+    "https://raw.githubusercontent.com/westarete/psu-hackathon-2014/master/public/images/#{attire(forecast)}.png"
+  end
+
+end
+
+# How we respond to a home page request
+get '/' do
+  @location = Geocoder.search(params[:location]).first
+
+  if @location
+    # Figure out what times we'll use to fetch forecasts.
+    start_time = Time.now.to_i + 1*60*60
+    lunch_time = Time.now.to_i + 5*60*60
+    end_time = Time.now.to_i + 10*60*60
+
+    # Get the forecasts.
+    @forecast_start = ForecastIO.forecast(@location.latitude, @location.longitude, :time => start_time).currently
+    @forecast_lunch = ForecastIO.forecast(@location.latitude, @location.longitude, :time => lunch_time).currently
+    @forecast_end   = ForecastIO.forecast(@location.latitude, @location.longitude, :time => end_time).currently
+  end
+
+  erb :index
+end
+```
+
+And here's the finished `views/index.erb`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bicycle Attire</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>You're leaving for work in one hour...</h1>
+
+    <p>
+      ...and you're not sure what to wear on your bike commute. Enter your location
+      below and we'll help you get dressed.
+    </p>
+
+    <div class="row">
+
+      <div class="col-md-6 col-md-offset-2" style="text-align: center">
+        <form class="form-inline" role="form" action="/" method="GET">
+
+          <input style="margin-bottom: 20px"
+                 class="form-control"
+                 name="location"
+                 type="text"
+                 size="50"
+                 placeholder="Enter your location"
+                 value="<%= @location.address if @location %>">
+
+          <button style="margin-bottom: 20px"
+                  type="submit"
+                  class="btn btn-primary">Tell me what to wear</button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="container">
+  <% if @location %>
+
+    <div class="row">
+
+      <div class="col-md-3 well" style="text-align: center">
+        <h2>Heading In</h2>
+        <img src="<%= attire_image_url(@forecast_start) %>" width="140px">
+        <br>
+        <%= @forecast_start.summary %>
+        <br>
+        <%= @forecast_start.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Lunch Time</h2>
+        <img src="<%= attire_image_url(@forecast_lunch) %>" width="140px">
+        <br>
+        <%= @forecast_lunch.summary %>
+        <br>
+        <%= @forecast_lunch.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Heading Home</h2>
+        <img src="<%= attire_image_url(@forecast_end) %>" width="140px">
+        <br>
+        <%= @forecast_end.summary %>
+        <br>
+        <%= @forecast_end.temperature.round %>&deg;
+      </div>
+
+    </div>
+
+  <% end %>
+</div>
+
+</body>
+</html>
+```
 
 ## Bonus - Deploy your application to Heroku
 
