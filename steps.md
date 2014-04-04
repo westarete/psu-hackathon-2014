@@ -209,6 +209,7 @@ Now we want to use the Geocoder in our application and make sure it's working. O
 
 ```ruby
 require 'geocoder'
+require 'multi_json'
 
 # Make sure we're using a gem that works on both Mac and Windows.
 MultiJson.use(:json_pure)
@@ -237,6 +238,21 @@ Let's test that theory. Open up `views/index.erb` and go to the bottom of the fi
 ```
 
 Go reload the page and you should see our debug statements at the bottom. Not flexible (we hard-coded the search for "penn state"), and not pretty, but it works! 
+
+As a final nicety, let's fill in the search box field with whatever was just found last time. In `views/index.erb`, find the line around line 40 that looks like this:
+
+```html
+    value="">
+```
+
+and change it to this:
+
+```html
+    value="<%= @location.address if @location %>">
+```
+
+Now when you reload the page, it should fill in the text box with the results of the "penn state" search that we did.
+
 
 
 
