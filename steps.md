@@ -203,6 +203,44 @@ gem 'json_pure'
 
 Now run `bundle install` on the command line to install the new gems. Bundler will download them from http://rubygems.org and install them in `vendor/bundle` for your app to use.
 
+## Step 6 - Geocode a location
+
+Now we want to use the Geocoder in our application and make sure it's working. Open up your `app.rb` and add the following lines just after the top set of `require` statements:
+
+```ruby
+require 'geocoder'
+
+# Make sure we're using a gem that works on both Mac and Windows.
+MultiJson.use(:json_pure)
+```
+
+That first line loads the gecoder gem into our app (Bundler just installed the gem for us, but this loads it into our app when the app runs).
+
+> The bottom line is a directive that instructs the geocoder gem to use a specific gem that's compatible with both Mac and Windows. This was the result of a problem that we encoutered while developing the app. Like most problems, we described the problem that we were having in a google search, and we found this solution from someone's post who was having  a similar issue.
+
+Stop and restart your Sinatra server (the place where you are running `ruby app.rb`). Pull up that terminal window, and press control-C on Mac, or ctrl-Break on Windows. Sinatra should exit. Then restart it by running  `ruby app.rb` again. Reload the browser and make sure the app still runs. Now the geocoder gem is running in your app.
+
+Now we want to actually geocode an address as a test. It doesn't need to be pretty or powerful yet -- we just want to see if we can talk to the geocoder gem and display an answer. 
+
+While still in `app.rb`, find the `erb :index` line near the bottom. That's where our HTML view gets rendered. Insert a line right before it (but after the `get '/'` statement that looks like this:
+
+```ruby
+  @location = Geocoder.search("penn state").first
+```
+
+This looks up the first match for the location "penn state", and then saves the results to a variable called `@location`. This is a Ruby instance variable. In the case of Sinatra, this means that that variable will now be available to our view. 
+Let's test that theory. Open up `views/index.erb` and go to the bottom of the file. Add a few blank lines before the closing `</body>` and `</html>` tags, and insert this code there:
+
+```html
+<p>I found <%= @location.address %>.</p>
+<p>It has the lat/lon coordinates <%= @location.latitude %>, <%= @location.longitude %>.</p>
+```
+
+Go reload the page and you should see our debug statements at the bottom. Not flexible (we hard-coded the search for "penn state"), and not pretty, but it works! 
+
+
+
+
 
 ## Bonus - Deploy your application to Heroku
 
