@@ -48,7 +48,7 @@ Go to the command line in your source directory. Run the following command:
 bundle install --path vendor/bundle
 ```
 
-> More info: This will cause the Bundler to go download the Sinatra gems and install them in `vendor/bundle`, which is where Ruby will keep all the gems for your app. Bundler keeps track of exactly which version it installed via the file `Gemfile.lock`. You should keep this file around, but don't edit it directly.
+More info: This will cause the Bundler to go download the Sinatra gems and install them in `vendor/bundle`, which is where Ruby will keep all the gems for your app. Bundler keeps track of exactly which version it installed via the file `Gemfile.lock`. You should keep this file around, but don't edit it directly.
 
 This is the only time we need to specify the path. From here on out when we install more gems, we'll just be able to run `bundle install`.
 
@@ -198,6 +198,392 @@ Copy and paste the entire contents of this file into your `views/index.erb` (rep
 
 Reload it in your browser. You should see the initial top banner of our app, and it should look nice, but it shouldn't do anything.
 
+## Step 5 - Install geocoder gem
+
+Now we get to introduce our first piece of functionality. This is a partial step, but an important one. We need to be able to translate a location that the user enters, say "state college, pa", into latitude and longitude coordinates. We will use those coordinates later to request a precise weather forecast for that spot. 
+
+How do we do this? We rely on others' code again. We do a Google search and determine that the [geocoder](http://www.rubygeocoder.com/) gem is the best fit for us. It handles sending our request out to a remote server (in this case Google's geolocation servers), processing the response, and giving the results back to us. The code for us is amazingly simple. 
+
+We need to tell Bundler to install the geocoder gem for us. Open your `Gemfile` again and add the following two lines to the bottom:
+
+```ruby
+gem 'geocoder'
+gem 'json_pure'
+```
+
+Now run `bundle install` on the command line to install the new gems. Bundler will download them from http://rubygems.org and install them in `vendor/bundle` for your app to use.
+
+## Step 6 - Geocode a location
+
+Now we want to use the Geocoder in our application and make sure it's working. Open up your `app.rb` and add the following lines just after the top set of `require` statements:
+
+```ruby
+require 'geocoder'
+require 'multi_json'
+
+# Make sure we're using a gem that works on both Mac and Windows.
+MultiJson.use(:json_pure)
+```
+
+That first line loads the gecoder gem into our app (Bundler just installed the gem for us, but this loads it into our app when the app runs).
+
+The bottom line is a directive that instructs the geocoder gem to use a specific gem that's compatible with both Mac and Windows. This was the result of a problem that we encoutered while developing the app. Like most problems, we described the problem that we were having in a google search, and we found this solution from someone's post who was having  a similar issue.
+
+Stop and restart your Sinatra server (the place where you are running `ruby app.rb`). Pull up that terminal window, and press control-C on Mac, or ctrl-Break on Windows. Sinatra should exit. Then restart it by running  `ruby app.rb` again. Reload the browser and make sure the app still runs. Now the geocoder gem is running in your app.
+
+Now we want to actually geocode an address as a test. It doesn't need to be pretty or powerful yet -- we just want to see if we can talk to the geocoder gem and display an answer. 
+
+While still in `app.rb`, find the `erb :index` line near the bottom. That's where our HTML view gets rendered. Insert a line right before it (but after the `get '/'` statement that looks like this:
+
+```ruby
+  @location = Geocoder.search("penn state").first
+```
+
+This looks up the first match for the location "penn state", and then saves the results to a variable called `@location`. This is a Ruby instance variable. In the case of Sinatra, this means that that variable will now be available to our view. 
+Let's test that theory. Open up `views/index.erb` and go to the bottom of the file. Add a few blank lines before the closing `</body>` and `</html>` tags, and insert this code there:
+
+```html
+<% if @location %>
+  <p>I found <%= @location.address %>.</p>
+  <p>It has the lat/lon coordinates <%= @location.latitude %>, <%= @location.longitude %>.</p>
+<% end %>
+```
+
+Go reload the page and you should see our debug statements at the bottom. Not flexible (we hard-coded the search for "penn state"), and not pretty, but it works! 
+
+## Step 7 - Connecting the form field
+
+Right now we're just hard coding the search for "penn state". Let's connect the form to our search so that we can search for whatever the user enters. Open `app.rb` and change the geolocation line to this:
+
+```ruby
+  @location = Geocoder.search(params[:location]).first
+```
+
+And as a final nicety, let's also fill in the search box field with whatever was just found last time. In `views/index.erb`, find the line around line 40 that looks like this:
+
+```html
+    value="">
+```
+
+and change it to this:
+
+```html
+    value="<%= @location.address if @location %>">
+```
+
+Now when you reload the page, you should be able to search for any location, and the search field should repopulate with what you found.
+
+Notice that if you search for nothing, or if you search for garbage, the application throws an error (it's helpful to try to read these carefully). That's because we don't always get a location back, and our view code is relying on it. That's OK. We'll make it stronger later. For now we're just trying to get things wired up.
+
+## Step 8 - Install Forecast gem
+
+Now it's time to try to get our first weather forecast. We're going to use the awesome [forecast.io](http://forecast.io/) service. I've already signed up for a developer account and bought an API key for us to use (I'll cancel it in a few days to avoid getting a huge bill).
+
+Fortunately, like most good web services, someone has already written a Ruby gem for us to talk to Forecast! Let's add it to the bottom of our `Gemfile`:
+
+```ruby
+gem 'forecast_io'
+```
+
+And then add the following new `require` line to our `app.rb`, with the other statements like it at the top:
+
+```ruby
+require 'forecast_io'
+```
+
+We also need to tell the application what our API key is, so that Forecast can track our usage and charge us for the service. Otherwise it won't let us in. Add the following line a bit below the `require` statements in `app.rb`:
+
+```ruby
+ForecastIO.api_key = 'dc9060a06370dd03b46af35827653a8c'
+```
+
+If you're working on this other than at the 2014 PSU Hackathon, you'll have to register and get your own API key from forecast.io here: <https://developer.forecast.io/> . But those at the Hackathon can use the one above.
+
+Stop and restart your Sinatra server again. Reload the page. It should still work, but it won't have any new functionality yet. If it reloads without any errors, you're ready to go on to the next step.
+
+## Step 9 - First forecast
+
+Let's do a very simple forecast to make sure things are working. Paste the following code into your `app.rb` right after the line where we set `@location`, but before where we render our HTML template.
+
+```ruby
+  if @location
+    @forecast = ForecastIO.forecast(@location.latitude, @location.longitude).currently 
+  end
+```
+
+This is going to make a call to Forecast, using our latitude and longitude, and request the current forecast for that location. Just like `@location`, we'll store the result in an instance variable called `@forecast`. But it's only going to do so if a location was actually found during geolocation.
+
+Now edit your `views/index.erb` and add the following line right below the lines at the bottom where we report on the coordinates (but still inside the "if" statement):
+
+```html
+  <p>The forecast is <%= @forecast.summary %>.</p>
+```
+
+Go reload the page. You should now be displaying forecasts for locations!
+
+## Step 10 - Display three forecasts
+
+Now we want to show the three forecasts -- the commute in to work, lunch time, and the commute home. Open up `app.rb` and replace our simple "if" statement and forecast call (be sure to leave the `@location` and `erb :index` lines alone) with the following larger stanza:
+
+```ruby
+  if @location
+    # Figure out what times we'll use to fetch forecasts.
+    start_time = Time.now.to_i + 1*60*60
+    lunch_time = Time.now.to_i + 5*60*60
+    end_time = Time.now.to_i + 10*60*60
+
+    # Get the forecasts.
+    @forecast_start = ForecastIO.forecast(@location.latitude, @location.longitude, :time => start_time).currently
+    @forecast_lunch = ForecastIO.forecast(@location.latitude, @location.longitude, :time => lunch_time).currently
+    @forecast_end   = ForecastIO.forecast(@location.latitude, @location.longitude, :time => end_time).currently
+  end
+```
+
+Forecast can accept a time that you want in the future. We calculate 1, 5, and 10 hours from now (in seconds) and pass those to three separate calls to Forecast. We store the results in three different instance variables that we'll use in our views. 
+
+Now swith over to `views/index.erb` and replace our small debug statements at the bottom with some real HTML:
+
+```html
+<div class="container">
+  <% if @location %>
+
+    <div class="row">
+
+      <div class="col-md-3 well" style="text-align: center">
+        <h2>Heading In</h2>
+        <%= @forecast_start.summary %>
+        <br>
+        <%= @forecast_start.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Lunch Time</h2>
+        <%= @forecast_lunch.summary %>
+        <br>
+        <%= @forecast_lunch.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Heading Home</h2>
+        <%= @forecast_end.summary %>
+        <br>
+        <%= @forecast_end.temperature.round %>&deg;
+      </div>
+
+    </div>
+
+  <% end %>
+</div>
+```
+
+This should show a box for each forecast on the page. Go check it out in your browser! Try it with some different locations.
+
+## Step 11 - Display images
+
+Let's show some visuals to drive home what should be worn for the bike ride. At the top of your `app.rb`, right before the `get '/'` block starts, past the following code:
+
+```ruby
+helpers do
+
+  # Given a forecast, return a string to represent the type of attire that should be worn.
+  def attire(forecast)
+    if forecast.icon == 'clear-day'
+      "sunglasses"
+    elsif forecast.temperature < 40
+      "hat"
+    elsif forecast.precipProbability >= 0.5
+      "raincoat"
+    else
+      "tshirt"
+    end
+  end
+
+  # Given a forecast, return the URL of the attire image to display.
+  def attire_image_url(forecast)
+    "https://raw.githubusercontent.com/westarete/psu-hackathon-2014/master/public/images/#{attire(forecast)}.png"
+  end
+
+end
+```
+
+This defines two "helper methods" that our views can use to display images. 
+
+In `views/index.erb`, right below each of the "Heading In", "Lunch Time" and "Heading Home" headings, paste the following snippets to display each image:
+
+```html
+        <img src="<%= attire_image_url(@forecast_start) %>" width="140px">
+        <br>
+```
+
+```html
+        <img src="<%= attire_image_url(@forecast_lunch) %>" width="140px">
+        <br>
+```
+
+```html
+        <img src="<%= attire_image_url(@forecast_lunch) %>" width="140px">
+        <br>
+```
+
+Those snippets will call the helpers and inject the URLs for the right image for each box. Try it out, and you should now see the finished page.
+
+## Wrap Up
+
+Your app should now be functional. Here is the finished `app.rb`:
+
+```ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'sinatra'
+require 'sinatra/reloader' if development?
+require 'geocoder'
+require 'multi_json'
+require 'forecast_io'
+
+# Set our API key for talking to forecast.io
+ForecastIO.api_key = 'dc9060a06370dd03b46af35827653a8c'
+
+# Make sure we're using a gem that works on both Mac and Windows.
+MultiJson.use(:json_pure)
+
+# The methods in this block will be available to the views
+helpers do
+
+  # Given a forecast, return a string to represent the type of attire that should be worn.
+  def attire(forecast)
+    if forecast.icon == 'clear-day'
+      "sunglasses"
+    elsif forecast.temperature < 40
+      "hat"
+    elsif forecast.precipProbability >= 0.5
+      "raincoat"
+    else
+      "tshirt"
+    end
+  end
+
+  # Given a forecast, return the URL of the attire image to display.
+  def attire_image_url(forecast)
+    "https://raw.githubusercontent.com/westarete/psu-hackathon-2014/master/public/images/#{attire(forecast)}.png"
+  end
+
+end
+
+# How we respond to a home page request
+get '/' do
+  @location = Geocoder.search(params[:location]).first
+
+  if @location
+    # Figure out what times we'll use to fetch forecasts.
+    start_time = Time.now.to_i + 1*60*60
+    lunch_time = Time.now.to_i + 5*60*60
+    end_time = Time.now.to_i + 10*60*60
+
+    # Get the forecasts.
+    @forecast_start = ForecastIO.forecast(@location.latitude, @location.longitude, :time => start_time).currently
+    @forecast_lunch = ForecastIO.forecast(@location.latitude, @location.longitude, :time => lunch_time).currently
+    @forecast_end   = ForecastIO.forecast(@location.latitude, @location.longitude, :time => end_time).currently
+  end
+
+  erb :index
+end
+```
+
+And here's the finished `views/index.erb`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bicycle Attire</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>You're leaving for work in one hour...</h1>
+
+    <p>
+      ...and you're not sure what to wear on your bike commute. Enter your location
+      below and we'll help you get dressed.
+    </p>
+
+    <div class="row">
+
+      <div class="col-md-6 col-md-offset-2" style="text-align: center">
+        <form class="form-inline" role="form" action="/" method="GET">
+
+          <input style="margin-bottom: 20px"
+                 class="form-control"
+                 name="location"
+                 type="text"
+                 size="50"
+                 placeholder="Enter your location"
+                 value="<%= @location.address if @location %>">
+
+          <button style="margin-bottom: 20px"
+                  type="submit"
+                  class="btn btn-primary">Tell me what to wear</button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="container">
+  <% if @location %>
+
+    <div class="row">
+
+      <div class="col-md-3 well" style="text-align: center">
+        <h2>Heading In</h2>
+        <img src="<%= attire_image_url(@forecast_start) %>" width="140px">
+        <br>
+        <%= @forecast_start.summary %>
+        <br>
+        <%= @forecast_start.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Lunch Time</h2>
+        <img src="<%= attire_image_url(@forecast_lunch) %>" width="140px">
+        <br>
+        <%= @forecast_lunch.summary %>
+        <br>
+        <%= @forecast_lunch.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Heading Home</h2>
+        <img src="<%= attire_image_url(@forecast_end) %>" width="140px">
+        <br>
+        <%= @forecast_end.summary %>
+        <br>
+        <%= @forecast_end.temperature.round %>&deg;
+      </div>
+
+    </div>
+
+  <% end %>
+</div>
+
+</body>
+</html>
+```
 
 ## Bonus - Deploy your application to Heroku
 
