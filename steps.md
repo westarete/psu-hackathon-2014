@@ -17,6 +17,8 @@ Gemfile: A file that lives in your source code. You use it to tell Bundler which
 
 localhost: This is always the network address of the machine that you're currently working on. So if you visit http://localhost/ , you're trying to visit a website on the machine that you're using. This is useful when you're developing a website on your laptop, because you're usually doing exactly that, over and over and over.
 
+HTML: Stands for Hypertext Markup Language. This is the fundamental language of the web. Web sites serve these documents to browsers, and their job is to render the HTML into what you see when you visit a site. So it's a language to describe the structure and content of a web page, and a way to link to other pages and actions (i.e. hypertext).
+
 ## Step 1 - Install our first gems
 
 Create a new file called `Gemfile` and open it in your editor. This is where we tell Bundler which RubyGems to install. Fill it with the following contents:
@@ -71,6 +73,49 @@ Now modify the "Hello, World!" text (keep the quotes), hit reload in your browse
 
 Congratulations! This is the usual workflow for developing web sites. 
 
+## Step 3 - Introduce a view
+
+Right now we're just returning some plain text from the middle of our application. That's not going to be a good way to build out a site that has an actual design. We want a separate file for our "view". This is where we put the HTML for the web page.
+
+Make a new directory called `views` (all lowercase), and then create a new file called `index.erb` under that. Your project directory structure should now look like this:
+
+```
+|
++- Gemfile          (where you specify which gems to load)
++- Gemfile.lock     (created by bundler)
++- app.rb           (where the application code lives)
++- vendor/          (created by bundler)
+    +- bundle/
+        +- .../
++- views/           (where we keep the html)
+    +- index.erb    (our soon-to-be first HTML template)
+```     
+
+Open your new `views/index.erb` file in your text editor, and put in the following content:
+
+```html
+Hello, <em>World!</em>
+```
+
+Now we need to tell the application to use that template when someone visits the home page of the site. Open `app.rb` in your editor and change the last stanza from this:
+
+```ruby
+get '/' do
+  "Hello, World!"
+end
+```
+
+to this:
+
+```ruby
+get '/' do
+  erb :index
+end
+```
+
+This tells Sinatra to render the view that is named "index". Be sure to include that colon and get the spacing right. 
+
+Reload the page in your browser (<http://localhost:4567/>). You should now see that the word "World" is stylized. We're now serving HTML to the browser from our web app, and we can make that HTML as simple or as complex as we want it to be.
 
 ## Bonus - Deploy your application to Heroku
 
