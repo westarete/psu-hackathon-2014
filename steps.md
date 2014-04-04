@@ -127,7 +127,7 @@ Beyond using a common framework, it's also extremely common to go find an HTML t
 
 Here is an empty template that we'll be using for our application. Note that nothing is "hooked up" at this point. It's pretty to look at, but it's just HTML -- there's no functionality.
 
-Copy and paste the entire contents of this file into your `views/index.erb`: 
+Copy and paste the entire contents of this file into your `views/index.erb` (replace the hello world): 
 
 ```html
 <!DOCTYPE html>
