@@ -263,8 +263,31 @@ Now when you reload the page, you should be able to search for any location, and
 
 Notice that if you search for nothing, or if you search for garbage, the application throws an error (it's helpful to try to read these carefully). That's because we don't always get a location back, and our view code is relying on it. That's OK. We'll make it stronger later. For now we're just trying to get things wired up.
 
+## Step 8 - Install Forecast gem
 
+Now it's time to try to get our first weather forecast. We're going to use the awesome [forecast.io](http://forecast.io/) service. I've already signed up for a developer account and bought an API key for us to use (I'll cancel it in a few days to avoid getting a huge bill).
 
+Fortunately, like most good web services, someone has already written a Ruby gem for us to talk to Forecast! Let's add it to the bottom of our `Gemfile`:
+
+```ruby
+gem 'forecast_io'
+```
+
+And then add the following new `require` line to our `app.rb`, with the other statements like it at the top:
+
+```ruby
+require 'forecast_io'
+```
+
+We also need to tell the application what our API key is, so that Forecast can track our usage and charge us for the service. Otherwise it won't let us in. Add the following line a bit below the `require` statements in `app.rb`:
+
+```ruby
+ForecastIO.api_key = 'dc9060a06370dd03b46af35827653a8c'
+```
+
+If you're working on this other than at the 2014 PSU Hackathon, you'll have to register and get your own API key from forecast.io here: <https://developer.forecast.io/> . But those at the Hackathon can use the one above.
+
+Stop and restart your Sinatra server again. Reload the page. It should still work, but it won't have any new functionality yet. If it reloads without any errors, you're ready to go on to the next step.
 
 
 ## Bonus - Deploy your application to Heroku
