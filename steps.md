@@ -233,8 +233,10 @@ This looks up the first match for the location "penn state", and then saves the 
 Let's test that theory. Open up `views/index.erb` and go to the bottom of the file. Add a few blank lines before the closing `</body>` and `</html>` tags, and insert this code there:
 
 ```html
-<p>I found <%= @location.address %>.</p>
-<p>It has the lat/lon coordinates <%= @location.latitude %>, <%= @location.longitude %>.</p>
+<% if @location %>
+  <p>I found <%= @location.address %>.</p>
+  <p>It has the lat/lon coordinates <%= @location.latitude %>, <%= @location.longitude %>.</p>
+<% end %>
 ```
 
 Go reload the page and you should see our debug statements at the bottom. Not flexible (we hard-coded the search for "penn state"), and not pretty, but it works! 
@@ -288,6 +290,26 @@ ForecastIO.api_key = 'dc9060a06370dd03b46af35827653a8c'
 If you're working on this other than at the 2014 PSU Hackathon, you'll have to register and get your own API key from forecast.io here: <https://developer.forecast.io/> . But those at the Hackathon can use the one above.
 
 Stop and restart your Sinatra server again. Reload the page. It should still work, but it won't have any new functionality yet. If it reloads without any errors, you're ready to go on to the next step.
+
+## Step 9 - First forecast
+
+Let's do a very simple forecast to make sure things are working. Paste the following code into your `app.rb` right after the line where we set `@location`, but before where we render our HTML template.
+
+```ruby
+  if @location
+    @forecast = ForecastIO.forecast(@location.latitude, @location.longitude).currently 
+  end
+```
+
+This is going to make a call to Forecast, using our latitude and longitude, and request the current forecast for that location. Just like `@location`, we'll store the result in an instance variable called `@forecast`. But it's only going to do so if a location was actually found during geolocation.
+
+Now edit your `views/index.erb` and add the following line right below the lines at the bottom where we report on the coordinates:
+
+```html
+  <p>The forecast is <%= @forecast.summary %>.</p>
+```
+
+Go reload the page. You should now be displaying forecasts for locations!
 
 
 ## Bonus - Deploy your application to Heroku
