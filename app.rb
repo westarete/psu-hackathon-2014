@@ -14,5 +14,8 @@ MultiJson.use(:json_pure)
 
 get '/' do
   @location = Geocoder.search(params[:location]).first
+  if @location
+    @forecast = ForecastIO.forecast(@location.latitude, @location.longitude).currently
+  end
   erb :index
 end

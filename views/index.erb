@@ -50,8 +50,11 @@
   </div>
 </div>
 
-<p>I found <%= @location.address %>.</p>
-<p>It has lat/lon coordinates of <%= @location.latitude %>, <%= @location.longitude %>.</p>
+<% if @location %>
+  <p>I found <%= @location.address %>.</p>
+  <p>It has lat/lon coordinates of <%= @location.latitude %>, <%= @location.longitude %>.</p>
+  <p>The forecast is <%= @forecast.summary %>.</p>
+<% end %>
 
 </body>
 </html>
