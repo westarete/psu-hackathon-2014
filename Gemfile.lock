@@ -2,9 +2,17 @@ GEM
   remote: https://rubygems.org/
   specs:
     backports (3.6.0)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
+    forecast_io (2.0.0)
+      faraday
+      hashie
+      multi_json
     geocoder (1.1.9)
+    hashie (2.0.5)
     json_pure (1.8.1)
     multi_json (1.9.2)
+    multipart-post (2.0.0)
     rack (1.5.2)
     rack-protection (1.5.2)
       rack
@@ -27,6 +35,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  forecast_io
   geocoder
   json_pure
   sinatra
