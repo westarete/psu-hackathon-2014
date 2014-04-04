@@ -66,3 +66,22 @@ Now modify the "Hello, World!" text (keep the quotes), hit reload in your browse
 
 Congratulations! This is the usual workflow for developing web sites. 
 
+
+## Bonus - Deploy your application to Heroku
+
+[Heroku](http://heroku.com) is a hosting service for Rails, Sinatra and other web applications. If you deploy your application there (or at any hosting provider), it can have a public place on the web where other people can visit it. 
+
+In order to do this, we need to create a special configuration file that tells Heroku how to start up the application.
+
+Create a file called `config.ru` and put the following code in it:
+
+```ruby
+require './app'
+run Sinatra::Application
+```
+
+Now you can create a free account at [heroku.com](heroku.com), create a space for your app, and then follow their instructions for pushing the site to their servers so that it's hosted there. 
+
+You can see an example of this application hosted at Heroku here: 
+
+http://bike-attire.herokuapp.com/
