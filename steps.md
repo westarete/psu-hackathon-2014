@@ -117,6 +117,78 @@ This tells Sinatra to render the view that is named "index". Be sure to include 
 
 Reload the page in your browser (<http://localhost:4567/>). You should now see that the word "World" is stylized. We're now serving HTML to the browser from our web app, and we can make that HTML as simple or as complex as we want it to be.
 
+## Step 4 - The static page layout
+
+Now that we can render web pages, let's introduce the skeleton of our web page. It's nice to get the styling in place of what we're going to build first, so we can better visualize what we're creating. At first, it won't do anything -- it will just look pretty. But over the course of the next several steps, we'll gradually increase more and more functionality until we have a working application.
+
+It can take a lot of effort and talent to craft a well-designed web page. So as hackers, we do what any reasonably rushed person would do -- we steal! We're going to use a popular styling framework called [Bootstrap](http://getbootstrap.com/) to define all of the default styling for us. It's reasonably attractive and provides some simple building blocks for us to create our site. You'll probably recognize the style from around the web -- its' a widely used framework.
+
+Beyond using a common framework, it's also extremely common to go find an HTML template online that developers have put out for exactly that purpose. These are often free or cheap, and can be very well done.
+
+Here is an empty template that we'll be using for our application. Note that nothing is "hooked up" at this point. It's pretty to look at, but it's just HTML -- there's no functionality.
+
+Copy and paste the entire contents of this file into your `views/index.erb`: 
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bicycle Attire</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>You're leaving for work in one hour...</h1>
+
+    <p>
+      ...and you're not sure what to wear on your bike commute. Enter your location
+      below and we'll help you get dressed.
+    </p>
+
+    <div class="row">
+
+      <div class="col-md-6 col-md-offset-2" style="text-align: center">
+        <form class="form-inline" role="form" action="/" method="GET">
+
+          <input style="margin-bottom: 20px"
+                 class="form-control"
+                 name="location"
+                 type="text"
+                 size="50"
+                 placeholder="Enter your location"
+                 value="">
+
+          <button style="margin-bottom: 20px"
+                  type="submit"
+                  class="btn btn-primary">Tell me what to wear</button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
+```
+
+Reload it in your browser. You should see the initial top banner of our app, and it should look nice, but it shouldn't do anything.
+
+
 ## Bonus - Deploy your application to Heroku
 
 [Heroku](http://heroku.com) is a hosting service for Rails, Sinatra and other web applications. If you deploy your application there (or at any hosting provider), it can have a public place on the web where other people can visit it. 
