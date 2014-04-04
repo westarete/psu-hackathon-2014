@@ -1,3 +1,8 @@
+---
+layout: default
+title: Steps for the Ruby/Sinatra Workshop
+---
+
 ## Glossary
 
 [Ruby](https://www.ruby-lang.org/en/): A general-purpose programming language that was created in the mid-1990's by [Yukihiro "Matz" Matsumoto](http://en.wikipedia.org/wiki/Yukihiro_Matsumoto). Matz designed the language to be powerful and flexible, yet easy to learn and pleasant to use.
