@@ -9,6 +9,6 @@ require 'multi_json'
 MultiJson.use(:json_pure)
 
 get '/' do
-  @location = Geocoder.search("penn state").first
+  @location = Geocoder.search(params[:location]).first
   erb :index
 end
