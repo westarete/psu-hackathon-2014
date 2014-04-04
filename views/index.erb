@@ -50,11 +50,36 @@
   </div>
 </div>
 
-<% if @location %>
-  <p>I found <%= @location.address %>.</p>
-  <p>It has lat/lon coordinates of <%= @location.latitude %>, <%= @location.longitude %>.</p>
-  <p>The forecast is <%= @forecast.summary %>.</p>
-<% end %>
+<div class="container">
+  <% if @location %>
+
+    <div class="row">
+
+      <div class="col-md-3 well" style="text-align: center">
+        <h2>Heading In</h2>
+        <%= @forecast_start.summary %>
+        <br>
+        <%= @forecast_start.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Lunch Time</h2>
+        <%= @forecast_lunch.summary %>
+        <br>
+        <%= @forecast_lunch.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Heading Home</h2>
+        <%= @forecast_end.summary %>
+        <br>
+        <%= @forecast_end.temperature.round %>&deg;
+      </div>
+
+    </div>
+
+  <% end %>
+</div>
 
 </body>
 </html>

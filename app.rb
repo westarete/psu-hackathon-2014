@@ -14,8 +14,18 @@ MultiJson.use(:json_pure)
 
 get '/' do
   @location = Geocoder.search(params[:location]).first
+
   if @location
-    @forecast = ForecastIO.forecast(@location.latitude, @location.longitude).currently
+    # Figure out what times we'll use to fetch forecasts.
+    start_time = Time.now.to_i + 1*60*60
+    lunch_time = Time.now.to_i + 5*60*60
+    end_time = Time.now.to_i + 10*60*60
+
+    # Get the forecasts.
+    @forecast_start = ForecastIO.forecast(@location.latitude, @location.longitude, :time => start_time).currently
+    @forecast_lunch = ForecastIO.forecast(@location.latitude, @location.longitude, :time => lunch_time).currently
+    @forecast_end   = ForecastIO.forecast(@location.latitude, @location.longitude, :time => end_time).currently
   end
+
   erb :index
 end
