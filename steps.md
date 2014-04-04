@@ -303,13 +303,70 @@ Let's do a very simple forecast to make sure things are working. Paste the follo
 
 This is going to make a call to Forecast, using our latitude and longitude, and request the current forecast for that location. Just like `@location`, we'll store the result in an instance variable called `@forecast`. But it's only going to do so if a location was actually found during geolocation.
 
-Now edit your `views/index.erb` and add the following line right below the lines at the bottom where we report on the coordinates:
+Now edit your `views/index.erb` and add the following line right below the lines at the bottom where we report on the coordinates (but still inside the "if" statement):
 
 ```html
   <p>The forecast is <%= @forecast.summary %>.</p>
 ```
 
 Go reload the page. You should now be displaying forecasts for locations!
+
+## Step 10 - Display three forecasts
+
+Now we want to show the three forecasts -- the commute in to work, lunch time, and the commute home. Open up `app.rb` and replace our simple "if" statement and forecast call (be sure to leave the `@location` and `erb :index` lines alone) with the following larger stanza:
+
+```ruby
+  if @location
+    # Figure out what times we'll use to fetch forecasts.
+    start_time = Time.now.to_i + 1*60*60
+    lunch_time = Time.now.to_i + 5*60*60
+    end_time = Time.now.to_i + 10*60*60
+
+    # Get the forecasts.
+    @forecast_start = ForecastIO.forecast(@location.latitude, @location.longitude, :time => start_time).currently
+    @forecast_lunch = ForecastIO.forecast(@location.latitude, @location.longitude, :time => lunch_time).currently
+    @forecast_end   = ForecastIO.forecast(@location.latitude, @location.longitude, :time => end_time).currently
+  end
+```
+
+Forecast can accept a time that you want in the future. We calculate 1, 5, and 10 hours from now (in seconds) and pass those to three separate calls to Forecast. We store the results in three different instance variables that we'll use in our views. 
+
+Now swith over to `views/index.erb` and replace our small debug statements at the bottom with some real HTML:
+
+```html
+<div class="container">
+  <% if @location %>
+
+    <div class="row">
+
+      <div class="col-md-3 well" style="text-align: center">
+        <h2>Heading In</h2>
+        <%= @forecast_start.summary %>
+        <br>
+        <%= @forecast_start.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Lunch Time</h2>
+        <%= @forecast_lunch.summary %>
+        <br>
+        <%= @forecast_lunch.temperature.round %>&deg;
+      </div>
+
+      <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
+        <h2>Heading Home</h2>
+        <%= @forecast_end.summary %>
+        <br>
+        <%= @forecast_end.temperature.round %>&deg;
+      </div>
+
+    </div>
+
+  <% end %>
+</div>
+```
+
+This should show a box for each forecast on the page. Go check it out in your browser! Try it with some different locations.
 
 
 ## Bonus - Deploy your application to Heroku
