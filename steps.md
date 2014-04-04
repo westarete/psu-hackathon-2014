@@ -65,7 +65,7 @@ ruby app.rb
 
 You'll get a message about Sinatra starting, and the program will wait. The web server is now running on your machine and waiting for you to visit it. You can visit it here:
 
-http://localhost:4567/
+<http://localhost:4567/>
 
 You should see a plain white page with a little "Hello, World!" in the upper left-hand corner.
 
