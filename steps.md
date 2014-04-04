@@ -239,7 +239,15 @@ Let's test that theory. Open up `views/index.erb` and go to the bottom of the fi
 
 Go reload the page and you should see our debug statements at the bottom. Not flexible (we hard-coded the search for "penn state"), and not pretty, but it works! 
 
-As a final nicety, let's fill in the search box field with whatever was just found last time. In `views/index.erb`, find the line around line 40 that looks like this:
+## Step 7 - Connecting the form field
+
+Right now we're just hard coding the search for "penn state". Let's connect the form to our search so that we can search for whatever the user enters. Open `app.rb` and change the geolocation line to this:
+
+```ruby
+  @location = Geocoder.search(params[:location]).first
+```
+
+And as a final nicety, let's also fill in the search box field with whatever was just found last time. In `views/index.erb`, find the line around line 40 that looks like this:
 
 ```html
     value="">
@@ -251,8 +259,9 @@ and change it to this:
     value="<%= @location.address if @location %>">
 ```
 
-Now when you reload the page, it should fill in the text box with the results of the "penn state" search that we did.
+Now when you reload the page, you should be able to search for any location, and the search field should repopulate with what you found.
 
+Notice that if you search for nothing, or if you search for garbage, the application throws an error (it's helpful to try to read these carefully). That's because we don't always get a location back, and our view code is relying on it. That's OK. We'll make it stronger later. For now we're just trying to get things wired up.
 
 
 
