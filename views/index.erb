@@ -57,6 +57,8 @@
 
       <div class="col-md-3 well" style="text-align: center">
         <h2>Heading In</h2>
+        <img src="<%= attire_image_url(@forecast_start) %>" width="140px">
+        <br>
         <%= @forecast_start.summary %>
         <br>
         <%= @forecast_start.temperature.round %>&deg;
@@ -64,6 +66,8 @@
 
       <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
         <h2>Lunch Time</h2>
+        <img src="<%= attire_image_url(@forecast_lunch) %>" width="140px">
+        <br>
         <%= @forecast_lunch.summary %>
         <br>
         <%= @forecast_lunch.temperature.round %>&deg;
@@ -71,6 +75,8 @@
 
       <div class="col-md-3 col-md-offset-1 well" style="text-align: center">
         <h2>Heading Home</h2>
+        <img src="<%= attire_image_url(@forecast_end) %>" width="140px">
+        <br>
         <%= @forecast_end.summary %>
         <br>
         <%= @forecast_end.temperature.round %>&deg;

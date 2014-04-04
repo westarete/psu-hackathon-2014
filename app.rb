@@ -12,6 +12,30 @@ ForecastIO.api_key = 'dc9060a06370dd03b46af35827653a8c'
 # Make sure we're using a gem that works on both Mac and Windows.
 MultiJson.use(:json_pure)
 
+# The methods in this block will be available to the views
+helpers do
+
+  # Given a forecast, return a string to represent the type of attire that should be worn.
+  def attire(forecast)
+    if forecast.icon == 'clear-day'
+      "sunglasses"
+    elsif forecast.temperature < 40
+      "hat"
+    elsif forecast.precipProbability >= 0.5
+      "raincoat"
+    else
+      "tshirt"
+    end
+  end
+
+  # Given a forecast, return the URL of the attire image to display.
+  def attire_image_url(forecast)
+    "https://raw.githubusercontent.com/westarete/psu-hackathon-2014/master/public/images/#{attire(forecast)}.png"
+  end
+
+end
+
+# How we respond to a home page request
 get '/' do
   @location = Geocoder.search(params[:location]).first
 
