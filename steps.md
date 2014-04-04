@@ -3,6 +3,16 @@ layout: default
 title: Steps for the Ruby/Sinatra Workshop
 ---
 
+These are the step-by-step instructions for our workshop. An alternate view of this page can be found here directly on github:
+
+<https://github.com/westarete/psu-hackathon-2014/blob/gh-pages/steps.md>
+
+Along the same lines, if you're getting stuck in a particular area, you can go browse the finished source code here:
+
+<https://github.com/westarete/psu-hackathon-2014/>
+
+You can even change the "branch: master" drop down to point to a version of each particlar step that's listed below, so you can browse the code at that exact point. 
+
 ## Glossary
 
 [Ruby](https://www.ruby-lang.org/en/): A general-purpose programming language that was created in the mid-1990's by [Yukihiro "Matz" Matsumoto](http://en.wikipedia.org/wiki/Yukihiro_Matsumoto). Matz designed the language to be powerful and flexible, yet easy to learn and pleasant to use.
