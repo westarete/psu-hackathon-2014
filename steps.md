@@ -38,7 +38,7 @@ Go to the command line in your source directory. Run the following command:
 bundle install --path vendor/bundle
 ```
 
-> More info: This will cause the Bundler to go download the Sinatra gems and install them in `vendor/bundle`, which is where Ruby will keep all the gems for your app. Bundler keeps track of exactly which version it installed via the file `Gemfile.lock`. You should keep this file around, but don't edit it directly.
+More info: This will cause the Bundler to go download the Sinatra gems and install them in `vendor/bundle`, which is where Ruby will keep all the gems for your app. Bundler keeps track of exactly which version it installed via the file `Gemfile.lock`. You should keep this file around, but don't edit it directly.
 
 This is the only time we need to specify the path. From here on out when we install more gems, we'll just be able to run `bundle install`.
 
@@ -217,7 +217,7 @@ MultiJson.use(:json_pure)
 
 That first line loads the gecoder gem into our app (Bundler just installed the gem for us, but this loads it into our app when the app runs).
 
-> The bottom line is a directive that instructs the geocoder gem to use a specific gem that's compatible with both Mac and Windows. This was the result of a problem that we encoutered while developing the app. Like most problems, we described the problem that we were having in a google search, and we found this solution from someone's post who was having  a similar issue.
+The bottom line is a directive that instructs the geocoder gem to use a specific gem that's compatible with both Mac and Windows. This was the result of a problem that we encoutered while developing the app. Like most problems, we described the problem that we were having in a google search, and we found this solution from someone's post who was having  a similar issue.
 
 Stop and restart your Sinatra server (the place where you are running `ruby app.rb`). Pull up that terminal window, and press control-C on Mac, or ctrl-Break on Windows. Sinatra should exit. Then restart it by running  `ruby app.rb` again. Reload the browser and make sure the app still runs. Now the geocoder gem is running in your app.
 
