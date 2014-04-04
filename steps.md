@@ -188,6 +188,21 @@ Copy and paste the entire contents of this file into your `views/index.erb` (rep
 
 Reload it in your browser. You should see the initial top banner of our app, and it should look nice, but it shouldn't do anything.
 
+## Step 5 - Install geocoder gem
+
+Now we get to introduce our first piece of functionality. This is a partial step, but an important one. We need to be able to translate a location that the user enters, say "state college, pa", into latitude and longitude coordinates. We will use those coordinates later to request a precise weather forecast for that spot. 
+
+How do we do this? We rely on others' code again. We do a Google search and determine that the [geocoder](http://www.rubygeocoder.com/) gem is the best fit for us. It handles sending our request out to a remote server (in this case Google's geolocation servers), processing the response, and giving the results back to us. The code for us is amazingly simple. 
+
+We need to tell Bundler to install the geocoder gem for us. Open your `Gemfile` again and add the following two lines to the bottom:
+
+```ruby
+gem 'geocoder'
+gem 'json_pure'
+```
+
+Now run `bundle install` on the command line to install the new gems. Bundler will download them from http://rubygems.org and install them in `vendor/bundle` for your app to use.
+
 
 ## Bonus - Deploy your application to Heroku
 
